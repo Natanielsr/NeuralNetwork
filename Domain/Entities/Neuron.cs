@@ -10,6 +10,8 @@ public class Neuron : Node
 
     public Neuron(double bias, double[] weights)
     {
+        ValidatorDomain.ValidateValue(bias);
+        ValidatorDomain.ValidateValues(weights);
         _bias = bias;
         _weights = weights;
     }
