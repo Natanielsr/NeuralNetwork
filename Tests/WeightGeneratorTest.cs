@@ -1,4 +1,4 @@
-using Domain.Assembly;
+using Application.Assembly.Weight;
 using Xunit.Abstractions;
 
 namespace Tests;

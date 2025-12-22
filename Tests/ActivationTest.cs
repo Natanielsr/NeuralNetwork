@@ -1,4 +1,4 @@
-using Domain.Assembly;
+using Application.Assembly.NeuronFactory;
 using Domain.Entities;
 
 namespace Tests;
