@@ -40,6 +40,8 @@ public class Neuron : Node
             sum += value * weight;
         }
 
-        return new Output(Math.Tanh(sum));
+        this.SetValue(Math.Tanh(sum));
+
+        return new Output(this.Value);
     }
 }
