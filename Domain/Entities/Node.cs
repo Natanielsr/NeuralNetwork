@@ -1,4 +1,3 @@
-using Domain.Exceptions;
 using Domain.Utils;
 
 namespace Domain.Entities;
@@ -6,8 +5,7 @@ namespace Domain.Entities;
 public abstract class Node
 {
     public Guid Id { get; private set; }
-    public List<Connection> InputConnections { get; private set; } = new List<Connection>();
-    public List<Connection> OutputConnections { get; private set; } = new List<Connection>();
+    public List<Node> Outputs { get; private set; }
     public double Value { get; private set; }
 
     public Node()
@@ -27,16 +25,4 @@ public abstract class Node
         ValidatorDomain.ValidateValue(value);
         this.Value = value;
     }
-
-
-    public Node AddConnection(Node nextNode)
-    {
-        var conn = new Connection(this, nextNode);
-        OutputConnections.Add(conn);
-        nextNode.InputConnections.Add(conn);
-
-        return this;
-    }
-
-
 }
