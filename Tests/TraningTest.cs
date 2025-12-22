@@ -1,18 +1,51 @@
+using Application.Assembly.NeuronFactory;
 using Application.Training;
-using Domain.Assembly;
 using Domain.Entities;
+using Xunit.Abstractions;
 namespace Tests;
 
 public class TraningTest
 {
+    private readonly ITestOutputHelper _output;
 
+    public TraningTest(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
+    [Fact]
+    public void TrainMutationTest()
+    {
+        //arrange
+        var inputs = Input.CreateInputs(1, 1);
+        var neuronSize = 10;
+        var expectedOutput = Output.CreateOutput(0);
+        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0.125, 0.01);
+        var training = new TrainingField(trainingData);
+
+        //act
+        var result = training.Train(1000);
+
+        //assert
+        Assert.NotNull(result);
+        Assert.Equal(10, result.Length);
+        _output.WriteLine("\n");
+        foreach (var neuron in result)
+        {
+            Assert.Equal(2, neuron.GetWeights().Length);
+            _output.WriteLine(neuron.ToString() + " O: " + neuron.Activation(inputs).Value);
+        }
+    }
 
     [Fact]
     public void TrainTest()
     {
         //arrange
         var inputs = Input.CreateInputs(1, 1, 1);
-        var training = new TrainingField(inputs, 10, Output.CreateOutput(0));
+        var neuronSize = 10;
+        var expectedOutput = Output.CreateOutput(0);
+        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0, 0);
+        var training = new TrainingField(trainingData);
 
         //act
         var result = training.Train(1000);
