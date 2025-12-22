@@ -1,29 +1,17 @@
-using Domain.Assembly;
+using Application.Assembly.NeuronFactory;
 using Domain.Entities;
 
 namespace Application.Training;
 
 public class TrainingField
 {
-    private Input[] inputs;
-    private int neuronsSize;
-    private Output expectedOutput;
-
+    private TrainingData trainingData;
     private Neuron[] currentGeneration;
 
-    public TrainingField(
-        Input[] inputs,
-        int neuronsSize,
-        Output expectedOutput)
+    public TrainingField(TrainingData trainingData)
     {
-        if (neuronsSize < 3)
-        {
-            throw new Exception();
-        }
+        this.trainingData = trainingData;
 
-        this.inputs = inputs;
-        this.neuronsSize = neuronsSize;
-        this.expectedOutput = expectedOutput;
         currentGeneration = [];
     }
 
@@ -40,7 +28,7 @@ public class TrainingField
     private void RunGeneration()
     {
         assemblyGeneration();
-        var ranking = Ranking.RankTheBest(inputs, currentGeneration, expectedOutput);
+        var ranking = Ranking.RankTheBest(trainingData.Inputs, currentGeneration, trainingData.ExpectedOutput);
         currentGeneration = ranking.Select(r => r.Neuron).ToArray();
     }
 
@@ -48,7 +36,7 @@ public class TrainingField
     {
         if (currentGeneration.Length == 0)
         {
-            currentGeneration = NeuronAssembly.AssembleRandomNeurons(inputs.Length, neuronsSize);
+            currentGeneration = NeuronAssembly.AssembleRandomNeurons(trainingData.Inputs.Length, trainingData.NeuronsSize);
         }
         else
         {
@@ -61,13 +49,15 @@ public class TrainingField
         var father = currentGeneration[0];
         var mother = currentGeneration[1];
 
-        var newGeneration = new Neuron[neuronsSize];
+        var newGeneration = new Neuron[trainingData.NeuronsSize];
         newGeneration[0] = father;
         newGeneration[1] = mother;
 
-        for (int i = 2; i < neuronsSize; i++)
+        var genData = NeuronGenData.Create(father, mother, trainingData.MutationRate, trainingData.MutationStrength);
+
+        for (int i = 2; i < trainingData.NeuronsSize; i++)
         {
-            var child = NeuronAssembly.GenerateNeuronChild(father, mother);
+            var child = NeuronAssembly.GenerateNeuronChild(genData);
             newGeneration[i] = child;
         }
 
