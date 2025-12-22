@@ -1,4 +1,4 @@
-using Domain.Assembly;
+using Application.Assembly.NeuronFactory;
 using Domain.Entities;
 using Domain.Exceptions;
 
@@ -6,14 +6,15 @@ namespace Tests;
 
 public class NeuronAssemblyTest
 {
-
     [Fact]
     public void GenerateNeuronChild()
     {
         Neuron father = new Neuron(1, [1]);
         Neuron mother = new Neuron(1, [1]);
 
-        var child = NeuronAssembly.GenerateNeuronChild(father, mother);
+        var data = NeuronGenData.Create(father, mother, 0, 0);
+
+        var child = NeuronAssembly.GenerateNeuronChild(data);
         Assert.Equal(1, child.GetBias());
         Assert.Equal(1, child.GetWeights()[0]);
     }
