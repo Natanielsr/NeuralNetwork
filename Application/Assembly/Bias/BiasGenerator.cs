@@ -1,4 +1,4 @@
-namespace Domain.Assembly;
+namespace Application.Assembly.Bias;
 
 public class BiasGenerator
 {

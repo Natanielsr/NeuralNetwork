@@ -1,4 +1,5 @@
-using Domain.Assembly;
+
+using Application.Assembly.Bias;
 
 namespace Tests;
 
