@@ -1,6 +1,3 @@
-using System;
-using Domain.Entities;
-
 namespace Domain.Exceptions;
 
 public class NullNeuronInputConnectionReference : Exception
