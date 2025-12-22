@@ -1,28 +1,36 @@
+using Application.Assembly.Bias;
+using Application.Assembly.Weight;
 using Domain.Entities;
 
-namespace Domain.Assembly;
+namespace Application.Assembly.NeuronFactory;
 
 public static class NeuronAssembly
 {
     /// <summary>
     /// brings together 50% of the father and 50% of the mother to raise the child
+    /// with mutation
     /// </summary>
     /// <param name="parent1">Father.</param>
     /// <param name="parent2">Mother.</param>
     /// <returns>returns the son.</returns>
-    public static Neuron GenerateNeuronChild(Neuron parent1, Neuron parent2)
+    public static Neuron GenerateNeuronChild(NeuronGenData genData)
     {
         // juntar 50% do pai e 50% da mãe e criar o filho
-        var parent1Weights = parent1.GetWeights();
-        var parent2Weights = parent2.GetWeights();
+        var parent1Weights = genData.parent1.GetWeights();
+        var parent2Weights = genData.parent2.GetWeights();
 
-        var data = WeightGenData.Create(parent1Weights, parent2Weights, 0, 0);
+        var data = WeightGenData.Create(
+            parent1Weights,
+            parent2Weights,
+            genData.mutationRate,
+            genData.mutationStrength);
+
         var weightGen = new WeightGenerator(data);
         var childWeights = weightGen.GenerateWeights();
 
         var childBias = BiasGenerator.CrossoverBias(
-            parent1.GetBias(),
-            parent2.GetBias());
+            genData.parent1.GetBias(),
+            genData.parent2.GetBias());
 
         var childNeuron = new Neuron(childBias, childWeights);
 
