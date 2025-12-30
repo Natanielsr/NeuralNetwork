@@ -16,26 +16,43 @@ public static class NeuronAssembly
     public static Neuron GenerateNeuronChild(NeuronGenData genData)
     {
         // juntar 50% do pai e 50% da mãe e criar o filho
-        var parent1Weights = genData.parent1.GetWeights();
-        var parent2Weights = genData.parent2.GetWeights();
-
-        var data = WeightGenData.Create(
-            parent1Weights,
-            parent2Weights,
-            genData.mutationRate,
-            genData.mutationStrength);
-
-        var weightGen = new WeightGenerator(data);
-        var childWeights = weightGen.GenerateWeights();
-
-        var childBias = BiasGenerator.CrossoverBias(
-            genData.parent1.GetBias(),
-            genData.parent2.GetBias());
+        var childWeights = generateWeights(genData);
+        var childBias = generateBias(genData);
 
         var childNeuron = new Neuron(childBias, childWeights);
 
         return childNeuron;
 
+    }
+
+    private static double generateBias(NeuronGenData genData)
+    {
+        var biasGenData = BiasGenData.Create(
+            genData.parent1.GetBias(),
+            genData.parent2.GetBias(),
+            genData.mutationRate,
+            genData.mutationStrength
+        );
+
+        var biasGen = new BiasGenerator(biasGenData);
+        var childBias = biasGen.CrossoverBias();
+
+        return childBias;
+    }
+
+    private static double[] generateWeights(NeuronGenData genData)
+    {
+        var parent1Weights = genData.parent1.GetWeights();
+        var parent2Weights = genData.parent2.GetWeights();
+
+        var weightGenData = WeightGenData.Create(
+            parent1Weights,
+            parent2Weights,
+            genData.mutationRate,
+            genData.mutationStrength);
+
+        var weightGen = new WeightGenerator(weightGenData);
+        return weightGen.GenerateWeights();
     }
 
     public static Neuron[] AssembleRandomNeurons(int inputSize, int numberOfNeurons)

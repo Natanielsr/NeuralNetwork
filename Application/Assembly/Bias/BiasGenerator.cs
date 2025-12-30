@@ -2,24 +2,27 @@ namespace Application.Assembly.Bias;
 
 public class BiasGenerator
 {
-    const double _MUTATION_RATE = 0;
-    const double _MUTATION_STRENGTH = 0.05;
     const double _MIN_BIAS = -1.0;
     const double _MAX_BIAS = 1.0;
 
-    public static double CrossoverBias(
-    double fatherBias,
-    double motherBias)
+    BiasGenData biasData;
+
+    public BiasGenerator(BiasGenData biasData)
+    {
+        this.biasData = biasData;
+    }
+
+    public double CrossoverBias()
     {
         var rng = new Random();
 
         // crossover (média)
-        double bias = (fatherBias + motherBias) / 2.0;
+        double bias = (biasData.fatherBias + biasData.motherBias) / 2.0;
 
         // mutation
-        if (rng.NextDouble() < _MUTATION_RATE)
+        if (rng.NextDouble() < biasData.mutationRate)
         {
-            double noise = (rng.NextDouble() * 2.0 - 1.0) * _MUTATION_STRENGTH;
+            double noise = (rng.NextDouble() * 2.0 - 1.0) * biasData.mutationStrength;
             bias += noise;
         }
 
