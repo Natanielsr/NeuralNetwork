@@ -12,10 +12,10 @@ public static class FormatNeuron
         {
             var weightStr = $"w{i}: {weight}";
 
-            parts.Add($"{{ {weight} }}");
+            parts.Add($"{weight}");
 
             i++;
         }
-        return $"B:{neuron.GetBias()} W: [" + string.Join(", ", parts) + "]";
+        return $"B:{neuron.GetBias()} W:[" + string.Join(", ", parts) + "]";
     }
 }

@@ -33,7 +33,7 @@ public class TraningTest
         foreach (var neuron in result)
         {
             Assert.Equal(2, neuron.GetWeights().Length);
-            _output.WriteLine(neuron.ToString() + " O: " + neuron.Activation(inputs).Value);
+            _output.WriteLine(neuron.ToString() + " O:" + neuron.Activation(inputs).Value);
         }
     }
 
