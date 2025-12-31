@@ -7,16 +7,17 @@ public class BiasGenerationTest
 {
 
     [Theory]
-    [InlineData(0, 0, 0)]
-    [InlineData(0, 1, 0.5)]
-    [InlineData(1, 0, 0.5)]
-    [InlineData(1, 1, 1)]
-    [InlineData(0, -1, -0.5)]
-    [InlineData(-1, 0, -0.5)]
-    [InlineData(-1, -1, -1)]
-    [InlineData(1, -1, 0)]
-    [InlineData(-1, 1, 0)]
-    public void CrossoverBiasTest(double fatherBias, double motherBias, double expectedResult)
+    [InlineData(-1, -1, -1, -1)]
+    [InlineData(-1, 0, -1, 0)]
+    [InlineData(-1, 1, -1, 1)]
+    [InlineData(0, -1, 0, -1)]
+    [InlineData(0, 0, 0, 0)]
+    [InlineData(0, 1, 0, 1)]
+    [InlineData(1, -1, 1, -1)]
+    [InlineData(1, 0, 1, 0)]
+    [InlineData(1, 1, 1, 1)]
+    public void CrossoverBiasTest(
+        double fatherBias, double motherBias, double expectedResult1, double expectedResult2)
     {
         //arrange
         BiasGenData biasGenData = new(fatherBias, motherBias, 0, 0);
@@ -27,7 +28,8 @@ public class BiasGenerationTest
 
         //assert
         Assert.True(result >= -1 && result <= 1.0);
-        Assert.Equal(expectedResult, result);
+
+        Assert.True(result == expectedResult1 || result == expectedResult2);
     }
 
 }

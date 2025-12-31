@@ -16,8 +16,14 @@ public class BiasGenerator
     {
         var rng = new Random();
 
-        // crossover (média)
-        double bias = (biasData.fatherBias + biasData.motherBias) / 2.0;
+        double bias;
+
+        // crossover 50%
+        var result = rng.Next(2) == 0;
+        if (result)
+            bias = biasData.fatherBias;
+        else
+            bias = biasData.motherBias;
 
         // mutation
         if (rng.NextDouble() < biasData.mutationRate)
