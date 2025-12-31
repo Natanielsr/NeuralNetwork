@@ -20,7 +20,7 @@ public class TraningTest
         var inputs = Input.CreateInputs(1, 1);
         var neuronSize = 10;
         var expectedOutput = Output.CreateOutput(0);
-        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0.125, 0.01);
+        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 1, 1);
         var training = new TrainingField(trainingData);
 
         //act
@@ -30,9 +30,12 @@ public class TraningTest
         Assert.NotNull(result);
         Assert.Equal(10, result.Length);
         _output.WriteLine("\n");
+        Neuron? aux = null;
         foreach (var neuron in result)
         {
             Assert.Equal(2, neuron.GetWeights().Length);
+            Assert.NotEqual(neuron, aux);
+            aux = neuron;
             _output.WriteLine(neuron.ToString() + " O:" + neuron.Activation(inputs).Value);
         }
     }
