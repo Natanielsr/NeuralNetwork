@@ -5,6 +5,18 @@ namespace Tests;
 public class NeuronTest
 {
     [Fact]
+    public void TestHashCode()
+    {
+        var n1 = new Neuron(0.5, [0.1]);
+        var n2 = new Neuron(0.5, [0.1]);
+
+        var hash1 = n1.GetHashCode();
+        var hash2 = n2.GetHashCode();
+
+        Assert.True(hash1.Equals(hash2));
+    }
+
+    [Fact]
     public void Equals_IsSymmetric()
     {
         var n1 = new Neuron(0.5, [0.1]);
