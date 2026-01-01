@@ -76,4 +76,9 @@ public class Neuron : Node
         return hash.ToHashCode();
     }
 
+    public Neuron Clone()
+    {
+        return new Neuron(_bias, _weights!, BiasMutation, WeightMutation);
+    }
+
 }

@@ -50,8 +50,8 @@ public class TrainingField
         var mother = currentGeneration[1];
 
         var newGeneration = new Neuron[trainingData.NeuronsSize];
-        newGeneration[0] = father;
-        newGeneration[1] = mother;
+        newGeneration[0] = father.Clone();
+        newGeneration[1] = mother.Clone();
 
         var genData = NeuronGenData.Create(father, mother, trainingData.MutationRate, trainingData.MutationStrength);
 
