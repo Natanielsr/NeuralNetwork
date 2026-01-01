@@ -1,24 +1,22 @@
+using Domain.Entities;
 using Domain.Utils;
 
-namespace Application.Assembly.Bias;
+namespace Application.Assembly.BiasGen;
 
 public record class BiasGenData
 {
-    public double fatherBias { get; private set; }
-    public double motherBias { get; private set; }
+    public Bias fatherBias { get; private set; }
+    public Bias motherBias { get; private set; }
     public double mutationRate { get; private set; }
     public double mutationStrength { get; private set; }
 
     public BiasGenData(
-        double fatherBias,
-        double motherBias,
+        Bias fatherBias,
+        Bias motherBias,
         double mutationRate,
         double mutationStrength
         )
     {
-
-        ValidatorDomain.ValidateValue(fatherBias);
-        ValidatorDomain.ValidateValue(motherBias);
         ValidatorDomain.ValidatePercentage(mutationRate);
         ValidatorDomain.ValidatePercentage(mutationStrength);
 
@@ -29,14 +27,28 @@ public record class BiasGenData
     }
 
     public static BiasGenData Create(
-        double fatherBias,
-        double motherBias,
+        Bias fatherBias,
+        Bias motherBias,
         double mutationRate,
         double mutationStrength)
     {
         return new BiasGenData(
             fatherBias,
             motherBias,
+            mutationRate,
+            mutationStrength
+        );
+    }
+
+    public static BiasGenData Create(
+        double fatherBias,
+        double motherBias,
+        double mutationRate,
+        double mutationStrength)
+    {
+        return new BiasGenData(
+            Bias.Create(fatherBias),
+            Bias.Create(motherBias),
             mutationRate,
             mutationStrength
         );

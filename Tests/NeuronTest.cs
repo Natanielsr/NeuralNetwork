@@ -97,7 +97,7 @@ public class NeuronTest
         var neuron = new Neuron(0, [-1, 0, 1]);
 
         //act
-        var weights = neuron.GetWeights();
+        double[] weights = neuron.GetWeightValues();
 
         //assert
         Assert.Equal(3, weights.Length);

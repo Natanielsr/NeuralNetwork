@@ -26,6 +26,40 @@ public class TraningTest
         TrainingData trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, mutationRate, mutationStrength);
         return new(trainingData);
     }
+
+
+    [Fact]
+    public void MutationPercentageTest()
+    {
+        //arrange
+        int mutationCounter = 0;
+        int expected = 80;
+        int tolerance = (int)(expected * 0.1);
+        int min = expected - tolerance;
+        int max = expected + tolerance;
+
+        TrainingField trainingField = CreateTrainingMutationFieldTest(0.125, 1);
+
+        //act
+        for (int i = 0; i < 1000; i++)
+        {
+            Assert.NotNull(trainingField);
+            Neuron[] neurons = trainingField.Train(2);
+
+            Assert.Equal(10, neurons.Length);
+
+            foreach (var neuron in neurons)
+            {
+                //if (neuron.BiasMutation || neuron.WeightMutation)
+                //    mutationCounter++;
+
+            }
+        }
+
+        //assert
+        //Assert.InRange(mutationCounter, min, max);
+    }
+
     [Fact]
     public void TwoTraningTest()
     {

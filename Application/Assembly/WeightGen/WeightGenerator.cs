@@ -1,4 +1,6 @@
-namespace Application.Assembly.Weight;
+using Domain.Entities;
+
+namespace Application.Assembly.WeightGen;
 
 public class WeightGenerator
 {
@@ -15,19 +17,19 @@ public class WeightGenerator
         random = new Random();
     }
 
-    public double[] GenerateWeights()
+    public Weight[] GenerateWeights()
     {
-        if (data.parent1.Length == 0 || data.parent2.Length == 0)
+        if (data.parentWeights1.Length == 0 || data.parentWeights1.Length == 0)
         {
-            throw new ArgumentException("parent lenght 0");
+            throw new ArgumentException("parent weights lenght 0");
         }
 
-        if (data.parent1.Length != data.parent2.Length)
+        if (data.parentWeights1.Length != data.parentWeights1.Length)
         {
-            throw new ArgumentException("parent lenght different");
+            throw new ArgumentException("parent weights lenght different");
         }
 
-        if (data.parent1.Length > 1)
+        if (data.parentWeights1.Length > 1)
         {
             return MutateWeights(divideWeights());
         }
@@ -37,23 +39,23 @@ public class WeightGenerator
         }
     }
 
-    private double[] oneWeightChild()
+    private Weight[] oneWeightChild()
     {
         bool resultado = random.NextDouble() < 0.5;
 
         if (resultado)
         {
-            return data.parent1;
+            return data.parentWeights1;
         }
         else
         {
-            return data.parent2;
+            return data.parentWeights2;
         }
     }
 
-    private double[] divideWeights()
+    private Weight[] divideWeights()
     {
-        int length = data.parent1.Length;
+        int length = data.parentWeights1.Length;
         int half = length / 2;
 
         // índices disponíveis
@@ -65,21 +67,21 @@ public class WeightGenerator
             .Take(half)
             .ToHashSet();
 
-        var child = new double[length];
+        Weight[] childWeights = new Weight[length];
 
         for (int i = 0; i < length; i++)
         {
-            child[i] = indicesFromParent1.Contains(i)
-                ? data.parent1[i]
-                : data.parent2[i];
+            childWeights[i] = indicesFromParent1.Contains(i)
+                ? data.parentWeights1[i]
+                : data.parentWeights2[i];
         }
 
-        return child;
+        return childWeights;
     }
 
-    private double[] MutateWeights(double[] weights)
+    private Weight[] MutateWeights(Weight[] weights)
     {
-        var mutateWeights = new double[weights.Length];
+        Weight[] mutateWeights = new Weight[weights.Length];
         for (int i = 0; i < weights.Length; i++)
         {
             mutateWeights[i] = MutateWeight(weights[i]);
@@ -87,16 +89,25 @@ public class WeightGenerator
         return mutateWeights;
     }
 
-    public double MutateWeight(double weight)
+    public Weight MutateWeight(Weight weight)
     {
+        double weightValue = weight.Value;
+        Weight newWeight;
+        bool hasMutation = false;
         if (random.NextDouble() < data.mutationRate)
         {
             // Valor entre -mutationStrength e +mutationStrength
             double delta = ((random.NextDouble() * 2) - 1) * data.mutationStrength;
-            weight += delta;
+            weightValue += delta;
+            hasMutation = true;
         }
 
-        return Clamp(weight);
+        double clampedValue = Clamp(weightValue);
+
+        newWeight = new Weight(clampedValue, hasMutation);
+
+        return newWeight;
+
     }
 
     private double Clamp(double weight)

@@ -1,5 +1,5 @@
-using Application.Assembly.Bias;
-using Application.Assembly.Weight;
+using Application.Assembly.BiasGen;
+using Application.Assembly.WeightGen;
 using Domain.Entities;
 
 namespace Application.Assembly.NeuronFactory;
@@ -31,7 +31,9 @@ public class NeuronAssembly
 
         return childNeuron;
     }
-    private double generateBias()
+
+
+    private Bias generateBias()
     {
         var biasGenData = BiasGenData.Create(
             genData.parent1.GetBias(),
@@ -46,7 +48,7 @@ public class NeuronAssembly
         return childBias;
     }
 
-    private double[] generateWeights()
+    private Weight[] generateWeights()
     {
         var parent1Weights = genData.parent1.GetWeights();
         var parent2Weights = genData.parent2.GetWeights();

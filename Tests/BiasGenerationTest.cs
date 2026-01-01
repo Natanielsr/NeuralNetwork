@@ -1,5 +1,6 @@
 
-using Application.Assembly.Bias;
+using Application.Assembly.BiasGen;
+using Domain.Entities;
 
 namespace Tests;
 
@@ -20,16 +21,16 @@ public class BiasGenerationTest
         double fatherBias, double motherBias, double expectedResult1, double expectedResult2)
     {
         //arrange
-        BiasGenData biasGenData = new(fatherBias, motherBias, 0, 0);
+        BiasGenData biasGenData = BiasGenData.Create(fatherBias, motherBias, 0, 0);
         BiasGenerator biasGen = new(biasGenData);
 
         //act
-        var result = biasGen.CrossoverBias();
+        Bias resultBias = biasGen.CrossoverBias();
 
         //assert
-        Assert.True(result >= -1 && result <= 1.0);
+        Assert.True(resultBias.Value >= -1 && resultBias.Value <= 1.0);
 
-        Assert.True(result == expectedResult1 || result == expectedResult2);
+        Assert.True(resultBias.Value == expectedResult1 || resultBias.Value == expectedResult2);
     }
 
 }

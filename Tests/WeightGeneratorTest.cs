@@ -1,4 +1,5 @@
-using Application.Assembly.Weight;
+using Application.Assembly.WeightGen;
+using Domain.Entities;
 using Xunit.Abstractions;
 
 namespace Tests;
@@ -25,12 +26,12 @@ public class WeightGeneratorTest
         //act
         for (int i = 0; i < 1000; i++)
         {
-            var result = weightGenerator.GenerateWeights();
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Length);
+            Weight[] resultWeights = weightGenerator.GenerateWeights();
+            Assert.NotNull(resultWeights);
+            Assert.Equal(2, resultWeights.Length);
 
-            Assert.True(result[0] == p1[0] || result[0] == p2[0]);
-            Assert.True(result[1] == p1[1] || result[1] == p2[1]);
+            Assert.True(resultWeights[0].Value == p1[0] || resultWeights[0].Value == p2[0]);
+            Assert.True(resultWeights[1].Value == p1[1] || resultWeights[1].Value == p2[1]);
         }
 
     }
@@ -41,21 +42,21 @@ public class WeightGeneratorTest
         //arrange
         var p1 = new double[] { 0.0 };
         var p2 = new double[] { 0.0 };
-        var weight = 0;
+        Weight weight = new(0);
         var mutationRate = 1;
         var mutationStrength = 1;
 
         var data = WeightGenData.Create(p1, p2, mutationRate, mutationStrength);
         var weightGenerator = new WeightGenerator(data);
 
-        var aux = 0.0;
+        Weight aux = new(0);
         //act
         for (int i = 0; i < 100; i++)
         {
-            var result = weightGenerator.MutateWeight(weight);
-            Assert.True(result >= -1.0 || result <= 1.0);
-            Assert.NotEqual(aux, result);
-            aux = result;
+            Weight resultWeight = weightGenerator.MutateWeight(weight);
+            Assert.True(resultWeight.Value >= -1.0 || resultWeight.Value <= 1.0);
+            Assert.NotEqual(aux, resultWeight);
+            aux = resultWeight;
         }
 
     }
@@ -70,15 +71,15 @@ public class WeightGeneratorTest
         var data = WeightGenData.Create(p1, p2, 0, 0);
         var weightGen = new WeightGenerator(data);
         //act
-        var result = weightGen.GenerateWeights();
+        Weight[] resultWeights = weightGen.GenerateWeights();
 
         //assert
-        Assert.NotNull(result);
-        Assert.Equal(p1.Length, result.Length);
-        Assert.Equal(p2.Length, result.Length);
-        for (int i = 0; i < result.Length; i++)
+        Assert.NotNull(resultWeights);
+        Assert.Equal(p1.Length, resultWeights.Length);
+        Assert.Equal(p2.Length, resultWeights.Length);
+        for (int i = 0; i < resultWeights.Length; i++)
         {
-            Assert.True(result[i] == p1[i] || result[i] == p2[i]);
+            Assert.True(resultWeights[i].Value == p1[i] || resultWeights[i].Value == p2[i]);
         }
     }
 
@@ -86,27 +87,26 @@ public class WeightGeneratorTest
     public void GenerateWeightTest2()
     {
         //arrange
-        var p1 = new double[] { 0.1, 0.2 };
-        var p2 = new double[] { 0.3, 0.4 };
+        Weight[] p1 = Weight.Create([0.1, 0.2]);
+        Weight[] p2 = Weight.Create([0.3, 0.4]);
 
         var data = WeightGenData.Create(p1, p2, 0, 0);
         var weightGen = new WeightGenerator(data);
         //act
-        var result = weightGen.GenerateWeights();
+        Weight[] resultWeights = weightGen.GenerateWeights();
 
         //assert
-        Assert.NotNull(result);
-        Assert.Equal(p1.Length, result.Length);
-        Assert.Equal(p2.Length, result.Length);
+        Assert.NotNull(resultWeights);
+        Assert.Equal(p1.Length, resultWeights.Length);
+        Assert.Equal(p2.Length, resultWeights.Length);
 
-
-        if (result[0] == p1[0])
+        if (resultWeights[0].Equals(p1[0]))
         {
-            Assert.Equal(result[1], p2[1]);
+            Assert.Equal(resultWeights[1], p2[1]);
         }
-        else if (result[0] == p2[0])
+        else if (resultWeights[0].Equals(p2[0]))
         {
-            Assert.Equal(result[1], p1[1]);
+            Assert.Equal(resultWeights[1], p1[1]);
         }
         else
         {
@@ -130,18 +130,18 @@ public class WeightGeneratorTest
         //act
         for (int i = 0; i < 1000; i++)
         {
-            WeightGenData dataGen = new(p1, p2, 0, 0);
+            WeightGenData dataGen = WeightGenData.Create(p1, p2, 0, 0);
             WeightGenerator weightGen = new(dataGen);
-            double[] result = weightGen.GenerateWeights();
+            Weight[] resultWeights = weightGen.GenerateWeights();
 
-            Assert.NotNull(result);
-            Assert.Equal(p1.Length, result.Length);
-            Assert.Equal(p2.Length, result.Length);
-            Assert.True(result[0] == p1[0] || result[0] == p2[0]);
+            Assert.NotNull(resultWeights);
+            Assert.Equal(p1.Length, resultWeights.Length);
+            Assert.Equal(p2.Length, resultWeights.Length);
+            Assert.True(resultWeights[0].Value == p1[0] || resultWeights[0].Value == p2[0]);
 
-            if (result[0] == p1[0])
+            if (resultWeights[0].Value == p1[0])
                 p1Counter++;
-            else if (result[0] == p2[0])
+            else if (resultWeights[0].Value == p2[0])
                 p2Counter++;
         }
 

@@ -5,56 +5,71 @@ namespace Domain.Entities;
 
 public class Neuron : Node
 {
-    private double _bias;
-    private double[]? _weights;
-    public bool BiasMutation { get; private set; }
-    public bool WeightMutation { get; private set; }
+    private Bias bias;
+    private Weight[] weights;
 
     public Neuron(double bias, double[] weights)
     {
-        setProps(bias, weights);
-        BiasMutation = false;
-        WeightMutation = false;
+        this.bias = Bias.Create(bias);
+        this.weights = Weight.Create(weights);
     }
 
-    public Neuron(double bias, double[] weights, bool biasMutation, bool weightMutation)
+    public Neuron(Bias bias, Weight[] weights)
     {
-        setProps(bias, weights);
-        BiasMutation = biasMutation;
-        WeightMutation = weightMutation;
+        this.bias = bias;
+        this.weights = weights;
     }
 
-    void setProps(double bias, double[] weights)
-    {
-        ValidatorDomain.ValidateValue(bias);
-        ValidatorDomain.ValidateValues(weights);
-        _bias = bias;
-        _weights = weights;
-    }
 
     public override string ToString()
     {
         return FormatNeuron.ToString(this);
     }
 
-    public double[] GetWeights()
+    public Weight GetWeight(int pos)
     {
-        return _weights!;
+        return weights[pos];
     }
 
-    public double GetBias()
+    public Weight[] GetWeights()
     {
-        return _bias;
+        return weights;
+    }
+
+    public double[] GetWeightValues()
+    {
+        double[] weightValues = new double[weights.Length];
+        for (int i = 0; i < weightValues.Length; i++)
+        {
+            double weightValue = weights[i].Value;
+            weightValues[i] = weightValue;
+        }
+        return weightValues;
+    }
+
+    public double GetWeightValue(int pos)
+    {
+        return weights[pos].Value;
+    }
+
+    public Bias GetBias()
+    {
+        return bias;
+    }
+
+    public double GetBiasValue()
+    {
+        return bias.Value;
     }
 
     public Output Activation(Input[] inputs)
     {
-        double sum = _bias;
+        double sum = bias.Value;
 
         for (int i = 0; i < inputs.Length; i++)
         {
             double value = inputs[i].Value;
-            double weight = _weights![i];
+            double weight = weights[i].Value;
             sum += value * weight;
         }
 
@@ -63,38 +78,43 @@ public class Neuron : Node
         return new Output(this.Value);
     }
 
+    public bool NotEqual(Neuron other)
+    {
+        return !Equals(other);
+    }
+
     public override bool Equals(object? obj)
     {
         if (obj is not Neuron otherNeuron)
             return false;
 
-        if (_weights!.Length != otherNeuron._weights!.Length)
+        if (weights.Length != otherNeuron.weights.Length)
             return false;
 
         const double epsilon = 1e-9;
 
-        if (Math.Abs(_bias - otherNeuron._bias) > epsilon)
+        if (Math.Abs(bias.Value - otherNeuron.bias.Value) > epsilon)
             return false;
 
-        return _weights
-        .Zip(otherNeuron._weights, (a, b) => Math.Abs(a - b) <= epsilon)
+        return weights
+        .Zip(otherNeuron.weights, (a, b) => Math.Abs(a.Value - b.Value) <= epsilon)
         .All(equal => equal);
     }
 
     public override int GetHashCode()
     {
         var hash = new HashCode();
-        hash.Add(_bias);
+        hash.Add(bias.Value);
 
-        foreach (var w in _weights!)
-            hash.Add(w);
+        foreach (var w in weights)
+            hash.Add(w.Value);
 
         return hash.ToHashCode();
     }
 
     public Neuron Clone()
     {
-        return new Neuron(_bias, _weights!, BiasMutation, WeightMutation);
+        return new Neuron(bias, weights);
     }
 
 }

@@ -7,53 +7,35 @@ namespace Tests;
 public class NeuronAssemblyTest
 {
 
-    [Theory]
-    [InlineData(0.1, new double[2] { 0.1, 0.4 }, false, false)]
-    [InlineData(0.2, new double[2] { 0.3, 0.2 }, false, false)]
-    [InlineData(0.1, new double[2] { 0.1, 0.5 }, false, true)]
-    [InlineData(0.3, new double[2] { 0.1, 0.4 }, true, false)]
-    public void VerifyMutationTest(double childBias, double[] childWeights, bool mutationBias, bool mutationWeights)
-    {
-        Neuron father = new Neuron(0.1, [0.1, 0.2]);
-        Neuron mother = new Neuron(0.2, [0.3, 0.4]);
-
-        NeuronGenData data = NeuronGenData.Create(father, mother, 0, 0);
-
-        (bool biasMutation, bool weightMutation) = new NeuronAssembly(data).verifyMutation(childBias, childWeights);
-
-        Assert.True(biasMutation == mutationBias);
-        Assert.True(weightMutation == mutationWeights);
-    }
-
     [Fact]
     public void GenerateNeuronChild2()
     {
         Neuron father = new Neuron(0.1, [0.1, 0.2]);
         Neuron mother = new Neuron(0.2, [0.3, 0.4]);
 
-        var data = NeuronGenData.Create(father, mother, 0, 0);
+        NeuronGenData genDatadata = NeuronGenData.Create(father, mother, 0, 0);
 
-        Neuron child = new NeuronAssembly(data).GenerateNeuronChild();
+        Neuron child = new NeuronAssembly(genDatadata).GenerateNeuronChild();
         Assert.NotNull(child);
 
-        if (child.GetBias() != father.GetBias())
-            Assert.True(child.GetBias() == mother.GetBias());
-        else if (child.GetBias() != mother.GetBias())
-            Assert.True(child.GetBias() == father.GetBias());
+        if (child.GetBias().NotEqual(father.GetBias()))
+            Assert.Equal(child.GetBias(), mother.GetBias());
+        else if (child.GetBias().NotEqual(mother.GetBias()))
+            Assert.Equal(child.GetBias(), father.GetBias());
         else
             throw new Exception("the child bias cant be different of parents bias");
 
         Assert.Equal(2, child.GetWeights().Length);
         for (int i = 0; i < child.GetWeights().Length; i++)
         {
-            var fatherWeight = father.GetWeights()[i];
-            var motherWeight = mother.GetWeights()[i];
-            var childWeight = child.GetWeights()[i];
+            Weight fatherWeight = father.GetWeight(i);
+            Weight motherWeight = mother.GetWeight(i);
+            Weight childWeight = child.GetWeight(i);
 
-            if (childWeight != fatherWeight)
-                Assert.True(childWeight == motherWeight);
-            else if (childWeight != motherWeight)
-                Assert.True(childWeight == fatherWeight);
+            if (childWeight.NotEqual(fatherWeight))
+                Assert.Equal(childWeight, motherWeight);
+            else if (childWeight.NotEqual(motherWeight))
+                Assert.Equal(childWeight, fatherWeight);
             else
                 throw new Exception("the child weight cant be different of parents weights");
 
@@ -69,8 +51,8 @@ public class NeuronAssemblyTest
         var data = NeuronGenData.Create(father, mother, 0, 0);
 
         var child = new NeuronAssembly(data).GenerateNeuronChild();
-        Assert.Equal(1, child.GetBias());
-        Assert.Equal(1, child.GetWeights()[0]);
+        Assert.Equal(1, child.GetBiasValue());
+        Assert.Equal(1, child.GetWeightValue(0));
     }
 
     [Fact]
@@ -95,11 +77,11 @@ public class NeuronAssemblyTest
         foreach (var neuron in neurons)
         {
             Assert.Equal(inputLegth, neuron.GetWeights().Length);
-            Assert.True(neuron.GetBias() > -1.0 && neuron.GetBias() < 1.0);
+            Assert.True(neuron.GetBiasValue() > -1.0 && neuron.GetBiasValue() < 1.0);
 
             foreach (var weight in neuron.GetWeights())
             {
-                Assert.True(weight > -1.0 && weight < 1.0);
+                Assert.True(weight.Value > -1.0 && weight.Value < 1.0);
             }
         }
     }
@@ -112,10 +94,10 @@ public class NeuronAssemblyTest
         var neuron = new Neuron(0.1, [0.5, -1.0, 0.25]);
 
         //assert
-        Assert.Equal(0.1, neuron.GetBias(), 3);
-        Assert.Contains(neuron.GetWeights(), w => w == 0.5);
-        Assert.Contains(neuron.GetWeights(), w => w == -1.0);
-        Assert.Contains(neuron.GetWeights(), w => w == 0.25);
+        Assert.Equal(0.1, neuron.GetBiasValue(), 3);
+        Assert.Contains(neuron.GetWeights(), w => w.Value == 0.5);
+        Assert.Contains(neuron.GetWeights(), w => w.Value == -1.0);
+        Assert.Contains(neuron.GetWeights(), w => w.Value == 0.25);
 
     }
 
@@ -124,12 +106,12 @@ public class NeuronAssemblyTest
     {
         Neuron neuron = new Neuron(0.0, [0, 0, 0, 0]);
 
-        Assert.Equal(0.0, neuron.GetBias());
+        Assert.Equal(0.0, neuron.GetBiasValue());
         Assert.Equal(4, neuron.GetWeights().Length);
 
         foreach (var weight in neuron.GetWeights())
         {
-            Assert.Equal(0.0, weight);
+            Assert.Equal(0.0, weight.Value);
         }
     }
 

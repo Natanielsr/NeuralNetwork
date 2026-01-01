@@ -1,4 +1,6 @@
-namespace Application.Assembly.Bias;
+using Domain.Entities;
+
+namespace Application.Assembly.BiasGen;
 
 public class BiasGenerator
 {
@@ -12,28 +14,33 @@ public class BiasGenerator
         this.biasData = biasData;
     }
 
-    public double CrossoverBias()
+    public Bias CrossoverBias()
     {
         var rng = new Random();
 
-        double bias;
+        Bias bias;
+        double biasValue;
+        bool hasMutation = false;
 
         // crossover 50%
         var result = rng.Next(2) == 0;
         if (result)
-            bias = biasData.fatherBias;
+            biasValue = biasData.fatherBias.Value;
         else
-            bias = biasData.motherBias;
+            biasValue = biasData.motherBias.Value;
 
         // mutation
         if (rng.NextDouble() < biasData.mutationRate)
         {
             double noise = (rng.NextDouble() * 2.0 - 1.0) * biasData.mutationStrength;
-            bias += noise;
+            biasValue += noise;
+            hasMutation = true;
         }
 
-        // clamp
-        return Clamp(bias, _MIN_BIAS, _MAX_BIAS);
+        double clampedValue = Clamp(biasValue, _MIN_BIAS, _MAX_BIAS);
+        bias = new(clampedValue, hasMutation);
+
+        return bias;
     }
 
     static double Clamp(double value, double min, double max)
