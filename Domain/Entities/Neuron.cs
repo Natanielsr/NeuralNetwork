@@ -6,9 +6,25 @@ namespace Domain.Entities;
 public class Neuron : Node
 {
     private double _bias;
-    private double[] _weights;
+    private double[]? _weights;
+    public bool BiasMutation { get; private set; }
+    public bool WeightMutation { get; private set; }
 
     public Neuron(double bias, double[] weights)
+    {
+        setProps(bias, weights);
+        BiasMutation = false;
+        WeightMutation = false;
+    }
+
+    public Neuron(double bias, double[] weights, bool biasMutation, bool weightMutation)
+    {
+        setProps(bias, weights);
+        BiasMutation = biasMutation;
+        WeightMutation = weightMutation;
+    }
+
+    void setProps(double bias, double[] weights)
     {
         ValidatorDomain.ValidateValue(bias);
         ValidatorDomain.ValidateValues(weights);
@@ -23,7 +39,7 @@ public class Neuron : Node
 
     public double[] GetWeights()
     {
-        return _weights;
+        return _weights!;
     }
 
     public double GetBias()
@@ -38,7 +54,7 @@ public class Neuron : Node
         for (int i = 0; i < inputs.Length; i++)
         {
             double value = inputs[i].Value;
-            double weight = _weights[i];
+            double weight = _weights![i];
             sum += value * weight;
         }
 
@@ -52,7 +68,7 @@ public class Neuron : Node
         if (obj is not Neuron otherNeuron)
             return false;
 
-        if (_weights.Length != otherNeuron._weights.Length)
+        if (_weights!.Length != otherNeuron._weights!.Length)
             return false;
 
         const double epsilon = 1e-9;
@@ -70,7 +86,7 @@ public class Neuron : Node
         var hash = new HashCode();
         hash.Add(_bias);
 
-        foreach (var w in _weights)
+        foreach (var w in _weights!)
             hash.Add(w);
 
         return hash.ToHashCode();
