@@ -13,6 +13,29 @@ public class WeightGeneratorTest
     }
 
     [Fact]
+    public void ChildWeightTest()
+    {
+        //arrange
+        double[] p1 = [0.0, 0.1];
+        double[] p2 = [0.2, 0.3];
+
+        var data = WeightGenData.Create(p1, p2, 0, 0);
+        var weightGenerator = new WeightGenerator(data);
+
+        //act
+        for (int i = 0; i < 1000; i++)
+        {
+            var result = weightGenerator.GenerateWeights();
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Length);
+
+            Assert.True(result[0] == p1[0] || result[0] == p2[0]);
+            Assert.True(result[1] == p1[1] || result[1] == p2[1]);
+        }
+
+    }
+
+    [Fact]
     public void MutateWeightTest()
     {
         //arrange
