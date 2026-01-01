@@ -95,35 +95,35 @@ public class WeightGeneratorTest
     public void GenerateChildOneWeightTest()
     {
         //arrange
-        var p1 = new double[] { 0.1 };
-        var p2 = new double[] { 0.2 };
-        var p1Choose = 0;
-        var p2Choose = 0;
-        double expected = 500;
-        double tolerance = expected * 0.1;
-        var min = expected - tolerance;
-        var max = expected + tolerance;
+        double[] p1 = [0.1];
+        double[] p2 = [0.2];
+        int p1Counter = 0;
+        int p2Counter = 0;
+        int expected = 500;
+        int tolerance = (int)(expected * 0.1);
+        int min = expected - tolerance;
+        int max = expected + tolerance;
 
-        double[] result = null!;
         //act
         for (int i = 0; i < 1000; i++)
         {
-            var dataGen = new WeightGenData(p1, p2, 0, 0);
-            var weightGen = new WeightGenerator(dataGen);
-            result = weightGen.GenerateWeights();
+            WeightGenData dataGen = new(p1, p2, 0, 0);
+            WeightGenerator weightGen = new(dataGen);
+            double[] result = weightGen.GenerateWeights();
+
             Assert.NotNull(result);
             Assert.Equal(p1.Length, result.Length);
             Assert.Equal(p2.Length, result.Length);
             Assert.True(result[0] == p1[0] || result[0] == p2[0]);
 
             if (result[0] == p1[0])
-                p1Choose++;
+                p1Counter++;
             else if (result[0] == p2[0])
-                p2Choose++;
+                p2Counter++;
         }
 
         //assert
-        Assert.InRange(p1Choose, min, max);
-        Assert.InRange(p2Choose, min, max);
+        Assert.InRange(p1Counter, min, max);
+        Assert.InRange(p2Counter, min, max);
     }
 }
