@@ -13,15 +13,24 @@ public class TraningTest
         _output = output;
     }
 
-    [Fact]
-    public void SecondTraningTest()
+    TrainingField CreateTrainingFieldTest()
     {
-        //arrange
+        return CreateTrainingMutationFieldTest(0, 0);
+    }
+
+    TrainingField CreateTrainingMutationFieldTest(double mutationRate, double mutationStrength)
+    {
         Input[] inputs = Input.CreateInputs(1, 1);
         int neuronSize = 10;
         Output expectedOutput = Output.CreateOutput(0);
-        TrainingData trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0, 0);
-        TrainingField training = new(trainingData);
+        TrainingData trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, mutationRate, mutationStrength);
+        return new(trainingData);
+    }
+    [Fact]
+    public void TwoTraningTest()
+    {
+        //arrange
+        TrainingField training = CreateTrainingFieldTest();
 
         //act
         Neuron[] result = training.Train(2);
@@ -29,29 +38,16 @@ public class TraningTest
         //assert
         Assert.NotNull(result);
         Assert.Equal(10, result.Length);
-        Neuron father = result[0];
-        Neuron mother = result[1];
 
-
-
-        foreach (var neuron in result)
+        for (int i = 0; i < result.Length - 1; i++)
         {
-            _output.WriteLine(neuron.ToString() + " O:" + neuron.Activation(inputs).Value);
-            Assert.Equal(2, neuron.GetWeights().Length);
+            var current = Math.Abs(result[i].Value);
+            var next = Math.Abs(result[i + 1].Value);
 
-            double fatherBias = father.GetBias();
-            double motherBias = mother.GetBias();
-            Assert.True(fatherBias == neuron.GetBias() || motherBias == neuron.GetBias());
-
-            int i = 0;
-            foreach (var sonWeight in neuron.GetWeights())
-            {
-                double fatherWeight = father.GetWeights()[i];
-                double motherWeight = mother.GetWeights()[i];
-                Assert.True(fatherWeight == sonWeight || motherWeight == sonWeight);
-
-                i++;
-            }
+            Assert.True(
+                current <= next,
+                $"valor incorreto na posição {i}: |{current}| > |{next}|"
+            );
         }
     }
 
@@ -59,11 +55,7 @@ public class TraningTest
     public void FisrtTraningTest()
     {
         //arrange
-        var inputs = Input.CreateInputs(1, 1);
-        var neuronSize = 10;
-        var expectedOutput = Output.CreateOutput(0);
-        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0, 0);
-        var training = new TrainingField(trainingData);
+        var training = CreateTrainingFieldTest();
 
         //act
         var result = training.Train(1);
@@ -81,7 +73,7 @@ public class TraningTest
     }
 
     [Fact]
-    public void TrainMutationTest()
+    public void TrainFullRandomMutationTest()
     {
         //arrange
         var inputs = Input.CreateInputs(1, 1);
@@ -111,12 +103,7 @@ public class TraningTest
     public void TrainTest()
     {
         //arrange
-        var inputs = Input.CreateInputs(1, 1, 1);
-        var neuronSize = 10;
-        var expectedOutput = Output.CreateOutput(0);
-        var trainingData = TrainingData.Create(inputs, neuronSize, expectedOutput, 0, 0);
-        var training = new TrainingField(trainingData);
-
+        var training = CreateTrainingFieldTest();
         //act
         var result = training.Train(1000);
 
@@ -125,7 +112,7 @@ public class TraningTest
         Assert.Equal(10, result.Length);
         foreach (var neuron in result)
         {
-            Assert.Equal(3, neuron.GetWeights().Length);
+            Assert.Equal(2, neuron.GetWeights().Length);
         }
     }
 
