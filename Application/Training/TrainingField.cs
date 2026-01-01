@@ -55,9 +55,11 @@ public class TrainingField
 
         var genData = NeuronGenData.Create(father, mother, trainingData.MutationRate, trainingData.MutationStrength);
 
+        NeuronAssembly assembler = new NeuronAssembly(genData);
+
         for (int i = 2; i < trainingData.NeuronsSize; i++)
         {
-            var child = NeuronAssembly.GenerateNeuronChild(genData);
+            Neuron child = assembler.GenerateNeuronChild();
             newGeneration[i] = child;
         }
 
