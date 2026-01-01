@@ -4,8 +4,16 @@ using Domain.Entities;
 
 namespace Application.Assembly.NeuronFactory;
 
-public static class NeuronAssembly
+public class NeuronAssembly
 {
+    NeuronGenData genData;
+
+    public NeuronAssembly(
+        NeuronGenData genData)
+    {
+        this.genData = genData;
+    }
+
     /// <summary>
     /// brings together 50% of the father and 50% of the mother to raise the child
     /// with mutation
@@ -13,19 +21,17 @@ public static class NeuronAssembly
     /// <param name="parent1">Father.</param>
     /// <param name="parent2">Mother.</param>
     /// <returns>returns the son.</returns>
-    public static Neuron GenerateNeuronChild(NeuronGenData genData)
+    public Neuron GenerateNeuronChild()
     {
         // juntar 50% do pai e 50% da mãe e criar o filho
-        var childWeights = generateWeights(genData);
-        var childBias = generateBias(genData);
+        var childWeights = generateWeights();
+        var childBias = generateBias();
 
         var childNeuron = new Neuron(childBias, childWeights);
 
         return childNeuron;
-
     }
-
-    private static double generateBias(NeuronGenData genData)
+    private double generateBias()
     {
         var biasGenData = BiasGenData.Create(
             genData.parent1.GetBias(),
@@ -40,7 +46,7 @@ public static class NeuronAssembly
         return childBias;
     }
 
-    private static double[] generateWeights(NeuronGenData genData)
+    private double[] generateWeights()
     {
         var parent1Weights = genData.parent1.GetWeights();
         var parent2Weights = genData.parent2.GetWeights();
