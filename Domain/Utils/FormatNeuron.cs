@@ -10,12 +10,10 @@ public static class FormatNeuron
         var i = 1;
         foreach (var weight in neuron.GetWeights())
         {
-            var weightStr = $"w{i}: {weight}";
-
-            parts.Add($"{weight}");
+            parts.Add($"{weight.Value}");
 
             i++;
         }
-        return $"B:{neuron.GetBias()} W:[" + string.Join(", ", parts) + "]";
+        return $"M:{(neuron.HasMutation() ? "True" : "False")} B:{neuron.GetBias().Value} W:[" + string.Join(", ", parts) + "]";
     }
 }
