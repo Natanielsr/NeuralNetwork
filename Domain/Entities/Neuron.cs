@@ -20,6 +20,20 @@ public class Neuron : Node
         this.weights = weights;
     }
 
+    public bool HasMutation()
+    {
+        if (bias.HasMutation)
+            return true;
+
+        foreach (var weight in weights)
+        {
+            if (weight.HasMutation)
+                return true;
+        }
+
+        return false;
+    }
+
 
     public override string ToString()
     {
