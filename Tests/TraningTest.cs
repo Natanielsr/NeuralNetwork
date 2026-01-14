@@ -29,17 +29,17 @@ public class TraningTest
 
 
     [Fact]
-    public void MutationPercentageTest()
+    public void MutationPercentageTest() //CORRIGIR O BUG DA MAIS DE 10% DE MUTACAO POR CONTA DE COMBINAR A MUTACAO DO BIAS E DOS PESOS
     {
         //arrange
         int mutationCounter = 0;
-        int expected = 80;
+        int expected = 1000;
         int tolerance = (int)(expected * 0.1);
         int min = expected - tolerance;
         int max = expected + tolerance;
 
-        TrainingField trainingField = CreateTrainingMutationFieldTest(0.125, 1);
-
+        TrainingField trainingField = CreateTrainingMutationFieldTest(0.1, 0.1);
+        var total = 0;
         //act
         for (int i = 0; i < 1000; i++)
         {
@@ -50,14 +50,16 @@ public class TraningTest
 
             foreach (var neuron in neurons)
             {
-                //if (neuron.BiasMutation || neuron.WeightMutation)
-                //    mutationCounter++;
+                if (neuron.HasMutation())
+                    mutationCounter++;
 
+                total += 1;
             }
+
         }
 
         //assert
-        //Assert.InRange(mutationCounter, min, max);
+        Assert.InRange(mutationCounter, min, max);
     }
 
     [Fact]
